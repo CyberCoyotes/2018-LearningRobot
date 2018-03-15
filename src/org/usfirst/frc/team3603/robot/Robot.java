@@ -1,80 +1,78 @@
 package org.usfirst.frc.team3603.robot;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
+ * This currently is testing custom log files.
+ * @author Connor
+ *
  */
 public class Robot extends IterativeRobot {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
-	String autoSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
-
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
+	Victor frontLeft = new Victor(0);
+	Victor backLeft = new Victor(1);
+	Victor frontRight = new Victor(2);
+	Victor backRight = new Victor(3);
+	MecanumDrive mainDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
+	
+	Joystick drive = new Joystick(0);
+	
+	PowerDistributionPanel pdp = new PowerDistributionPanel();
+	DriverStation ds = DriverStation.getInstance();
+	
+	FileWriter timeWriter1;
+	FileWriter tempWriter1;
+	
+	PrintWriter timeWriter2;
+	PrintWriter tempWriter2;
+	
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
-		SmartDashboard.putData("Auto choices", chooser);
-	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
-	@Override
-	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
-	}
-
-	/**
-	 * This function is called periodically during autonomous
-	 */
-	@Override
-	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
+		try {
+			timeWriter1 = new FileWriter("/home/lvuser/timestamp.txt");
+			tempWriter1 = new FileWriter("/home/lvuser/temperature.txt");
+			timeWriter2 = new PrintWriter(timeWriter1);
+			tempWriter2 = new PrintWriter(tempWriter1);
+		} catch(IOException ex) {
+			System.out.println("Creating new file...");
 		}
 	}
-
-	/**
-	 * This function is called periodically during operator control
-	 */
 	@Override
-	public void teleopPeriodic() {
+	public void autonomousInit() {
 	}
 
-	/**
-	 * This function is called periodically during test mode
-	 */
+	@Override
+	public void autonomousPeriodic() {
+	}
+
+	@Override
+	public void teleopPeriodic() {
+		double x = drive.getRawAxis(0);
+		double y = drive.getRawAxis(1);
+		double rot = drive.getRawAxis(4);
+		if(Math.abs(x) >= 0.1 || Math.abs(y) >= 0.1 || Math.abs(rot) >= 0.1) {
+			mainDrive.driveCartesian(y, x, rot);
+		} else {
+			mainDrive.driveCartesian(0, 0, 0);
+		}
+		save();
+	}
+
 	@Override
 	public void testPeriodic() {
+	}
+	
+	private void save() {
+		timeWriter2.println(ds.getMatchTime());
+		tempWriter2.println(pdp.getTemperature());
 	}
 }
 
