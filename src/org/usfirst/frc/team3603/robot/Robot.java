@@ -28,21 +28,20 @@ public class Robot extends IterativeRobot {
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	DriverStation ds = DriverStation.getInstance();
 	
-	FileWriter timeWriter1;
-	FileWriter tempWriter1;
-	
-	PrintWriter timeWriter2;
-	PrintWriter tempWriter2;
+	FileWriter fw;
+	File f;
+	PrintWriter pw;
 	
 	@Override
 	public void robotInit() {
 		try {
-			timeWriter1 = new FileWriter("/home/lvuser/timestamp.txt");
-			tempWriter1 = new FileWriter("/home/lvuser/temperature.txt");
-			timeWriter2 = new PrintWriter(timeWriter1);
-			tempWriter2 = new PrintWriter(tempWriter1);
+			File f = new File("/U/matchData/time.txt");
+			if(!f.exists) {
+				f.create();
+			}
+			fw = new FileWriter(f);
+			pw = new PrintWriter(fw);
 		} catch(IOException ex) {
-			System.out.println("Creating new file...");
 		}
 	}
 	@Override
@@ -63,16 +62,11 @@ public class Robot extends IterativeRobot {
 		} else {
 			mainDrive.driveCartesian(0, 0, 0);
 		}
-		save();
+		pw.println(frontLeft.get());
 	}
 
 	@Override
 	public void testPeriodic() {
-	}
-	
-	private void save() {
-		timeWriter2.println(ds.getMatchTime());
-		tempWriter2.println(pdp.getTemperature());
 	}
 }
 
