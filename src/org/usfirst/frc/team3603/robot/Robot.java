@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3603.robot;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,8 +37,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		try {
 			File f = new File("/U/matchData/time.txt");
-			if(!f.exists) {
-				f.create();
+			if(!f.exists()) {
+				f.createNewFile();
 			}
 			fw = new FileWriter(f);
 			pw = new PrintWriter(fw);
