@@ -64,6 +64,7 @@ public class Robot extends IterativeRobot {
 			mainDrive.driveCartesian(0, 0, 0);
 		}
 		pw.println(frontLeft.get());
+		pw.flush();
 	}
 
 	@Override
