@@ -26,11 +26,7 @@ public class Robot extends IterativeRobot {
 	
 	Joystick drive = new Joystick(0);
 	
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	DriverStation ds = DriverStation.getInstance();
-	
 	FileWriter fw;
-	File f;
 	PrintWriter pw;
 	
 	@Override
@@ -41,7 +37,7 @@ public class Robot extends IterativeRobot {
 				f.createNewFile();
 			}
 			fw = new FileWriter(f);
-			pw = new PrintWriter(fw);
+			pw = new PrintWriter(fw, true);
 		} catch(IOException ex) {
 		}
 	}
@@ -64,7 +60,6 @@ public class Robot extends IterativeRobot {
 			mainDrive.driveCartesian(0, 0, 0);
 		}
 		pw.println(frontLeft.get());
-		pw.flush();
 	}
 
 	@Override
