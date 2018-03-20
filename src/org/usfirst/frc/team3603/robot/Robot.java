@@ -1,23 +1,20 @@
 package org.usfirst.frc.team3603.robot;
 
-import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Random;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 /**
  * This currently is testing custom log files.
  * @author Connor
- *
  */
 public class Robot extends IterativeRobot {
 	WPI_TalonSRX frontLeft = new WPI_TalonSRX(1);
@@ -33,26 +30,59 @@ public class Robot extends IterativeRobot {
 	
 	Timer t = new Timer();
 	
+	DataLogger logger = new DataLogger("/U/matchData/log6.txt", false);
+	
 	@Override
 	public void robotInit() {
-		try {
-			Random r = new Random();
-			File f = new File("/U/matchData/log6.txt");
-			if(!f.exists()) {
-				System.out.println("Creating new file...");
-				f.createNewFile();
-				System.out.println("File created");
-			} else {
-				System.out.println("File exists");
-			}
-			fw = new FileWriter(f);
-			pw = new PrintWriter(fw, false);
-
-		} catch(IOException ex) {
-			System.out.println("File failure...");
-		}
 		t.reset();
 		t.start();
+		String path;
+		String name = DriverStation.getInstance().getEventName();
+		MatchType match_type = DriverStation.getInstance().getMatchType();
+		String matchType;
+		switch(match_type) {
+		case Elimination:
+			matchType = "Elimination";
+			break;
+		case Qualification:
+			matchType = "Qualification";
+			break;
+		case None:
+			matchType = "";
+			break;
+		case Practice:
+			matchType = "Practice";
+			break;
+		default:
+			matchType = "";
+			break;
+		}
+		String number = Integer.toString(DriverStation.getInstance().getMatchNumber());
+		String time = Double.toString(DriverStation.getInstance().getMatchTime());
+		String replay = (Integer.toString(DriverStation.getInstance().getReplayNumber()));
+		if(name.equals(null)) {
+			name = "";
+		}
+		if(matchType.equals(null)) {
+			matchType = "";
+		}
+		if(number.equals(null)) {
+			number = "";
+		}
+		if(time.equals(null)) {
+			time = "";
+		}
+		if(replay.equals(null)) {
+			replay = "";
+		}
+		path ="/U/matchData/" + matchType + "_" + number + "_" + replay + "_" + time + ".txt";
+		if(path.equals("/U/matchData/.txt") || path.equals(null)) {
+			
+			path = "/U/matchData/log_" + Double.toString(t.get()) + ".txt";
+		}
+		logger = new DataLogger(path, false);
+		logger.writeln("Time" + "\t" + "Front Left" + "\t" + "Back Left" + "\t" + "Front Right" + "\t" + "Back Right");
+		logger.flush();
 	}
 	@Override
 	public void autonomousInit() {
@@ -72,11 +102,12 @@ public class Robot extends IterativeRobot {
 		} else {
 			mainDrive.driveCartesian(0, 0, 0);
 		}
-		pw.print(t.get() + "\t");
-		pw.print(frontLeft.get() + "\t");
-		pw.print(backLeft.get());
-		pw.print("\r\n");
-		pw.flush();
+		logger.write(t.get());
+		logger.write(frontLeft.get());
+		logger.write(backLeft.get());
+		logger.write(frontRight.get());
+		logger.writeln(backRight.get());
+		logger.flush();
 	}
 
 	@Override
