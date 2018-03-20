@@ -2,6 +2,7 @@ package org.usfirst.frc.team3603.robot;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.Random;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -30,7 +31,7 @@ public class Robot extends IterativeRobot {
 	
 	Timer t = new Timer();
 	
-	DataLogger logger = new DataLogger("/U/matchData/log6.txt", false);
+	DataLogger logger;
 	
 	@Override
 	public void robotInit() {
@@ -76,10 +77,10 @@ public class Robot extends IterativeRobot {
 			replay = "";
 		}
 		path ="/U/matchData/" + matchType + "_" + number + "_" + replay + "_" + time + ".txt";
-		if(path.equals("/U/matchData/.txt") || path.equals(null)) {
-			
-			path = "/U/matchData/log_" + Double.toString(t.get()) + ".txt";
-		}
+		//if(path.equals("/U/matchData/.txt") || path.equals(null)) {
+			Random r = new Random();
+			path = "/U/matchData/log_" + Integer.toString(r.nextInt(100000)) + ".txt";
+		//}
 		logger = new DataLogger(path, false);
 		logger.writeln("Time" + "\t" + "Front Left" + "\t" + "Back Left" + "\t" + "Front Right" + "\t" + "Back Right");
 		logger.flush();

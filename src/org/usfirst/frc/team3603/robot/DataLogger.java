@@ -14,13 +14,11 @@ public class DataLogger {
 	public DataLogger(String path, boolean autoFlush) {
 		try {
 			File f = new File(path);
-			if(!f.exists()) {
-				f.createNewFile();
-				System.out.println("File creation successful");
-			}
+			f.createNewFile();
 			fw = new FileWriter(f);
 			pw = new PrintWriter(fw, autoFlush);
 			doPrint = true;
+			System.out.println("File creation successful");
 		} catch(IOException ex) {
 			System.out.println("File creation failed");
 			ex.printStackTrace();
@@ -68,6 +66,10 @@ public class DataLogger {
 	}
 	
 	public void flush() {
-		pw.flush();
+		try {
+			pw.flush();
+		} catch(NullPointerException ex) {
+			
+		}
 	}
 }
