@@ -28,19 +28,19 @@ public class DataLogger {
 	
 	public void write(double data) {
 		if(doPrint) {
-			pw.print(data);
+			pw.print(data + ",");
 		}
 	}
 	
 	public void write(int data) {
 		if(doPrint) {
-			pw.print(data);
+			pw.print(data + ",");
 		}
 	}
 	
 	public void write(String data) {
 		if(doPrint) {
-			pw.print(data);
+			pw.print(data + ",");
 		}
 	}
 	

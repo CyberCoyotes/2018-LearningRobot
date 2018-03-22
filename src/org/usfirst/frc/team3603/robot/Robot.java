@@ -76,13 +76,13 @@ public class Robot extends IterativeRobot {
 		if(replay.equals(null)) {
 			replay = "";
 		}
-		path ="/U/matchData/" + matchType + "_" + number + "_" + replay + "_" + time + ".txt";
+		path ="/U/matchData/" + matchType + "_" + number + "_" + replay + "_" + time + ".csv";
 		//if(path.equals("/U/matchData/.txt") || path.equals(null)) {
 			Random r = new Random();
-			path = "/U/matchData/log_" + Integer.toString(r.nextInt(100000)) + ".txt";
+			path = "/U/matchData/log_" + Integer.toString(r.nextInt(100000)) + ".csv";
 		//}
 		logger = new DataLogger(path, false);
-		logger.writeln("Time" + "\t" + "Front Left" + "\t" + "Back Left" + "\t" + "Front Right" + "\t" + "Back Right");
+		logger.writeln("Time" + "," + "Front Left" + "," + "Back Left" + "," + "Front Right" + "," + "Back Right");
 		logger.flush();
 	}
 	@Override
